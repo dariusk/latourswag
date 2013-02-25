@@ -1,0 +1,16 @@
+{
+  "name": "latourswag",
+  "scripts": {
+    "start": "latourswag.js"
+  },
+  "dependencies": {
+    "node-restclient": "0.0.1",
+    "twit": "0.1.5",
+    "express": "2.5.9",
+    "ent": "0.0.5"
+  },
+  "version": "0.1.0-6",
+  "engines": {
+    "node": "0.6.x"
+  }
+}
