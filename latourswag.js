@@ -1,4 +1,3 @@
-var restclient = require('node-restclient');
 var Twit = require('twit');
 var ent = require('ent');
 
@@ -19,9 +18,9 @@ function makeSwag() {
 
   // set up our two data sources (you can paste these in your browser to see the results, in JSON format)
   // URI for all recent #swag tweets with 'and' in them
-  var swag = "http://search.twitter.com/search.json?callback=?&rpp=100&q='%23swag+and'&result_type=recent";
+  var swag = {q: "#swag and", count: 100, result_type: "recent"}; 
   // URI for all recent @latourbot tweets
-  var latour = "http://search.twitter.com/search.json?callback=?&rpp=100&q='from:latourbot'&result_type=recent"
+  var latour = {q: "from:latourbot", count: 100, result_type: "recent"};
   var swags = [];
   var latours = [];
   var latoursShort = [];
@@ -30,11 +29,11 @@ function makeSwag() {
   var tweet = "";
 
   // get the swag tweets 
-  restclient.get(swag, function (data) {
-    // parse them from JSON into a javascript object called 'data'
-    data = JSON.parse(data);
+  T.get('search/tweets', swag, function(err, data) {
+    // Stop if we receive an error instead of search results
+    if (err) throw err
     // jettison the metadata, we just care about the results of the search
-    var results = data.results;
+    var results = data.statuses;
     // look at each result and push it to an array called 'swags' if it is not an RT and ' and ' appears
     // more than 20 characters into the tweet
     for (var i = 0; i < results.length; i++) {
@@ -45,9 +44,9 @@ function makeSwag() {
     }
     console.log(swags.length);
     // get the latour tweets
-    restclient.get(latour, function (data) {
-      data = JSON.parse(data);
-      var results = data.results;
+    T.get('search/tweets', latour, function(err, data) {
+      if(err) throw err;
+      var results = data.statuses;
 
       // for each latour tweet, find the ones with ' and ' or a comma, and then only if the and or the comma
       // appear somewhat in the middle (30-90 characters). push those to the latours array.
